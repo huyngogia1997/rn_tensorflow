@@ -848,10 +848,22 @@
     xcode "^2.0.0"
     xmldoc "^0.4.0"
 
+"@tensorflow-models/blazeface@0.0.5":
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/@tensorflow-models/blazeface/-/blazeface-0.0.5.tgz#6261fcc5de61a283ea409b69f6a851f44a809826"
+  integrity sha512-bIMJDV2CD8rr7v9OrIDdDZVh9sbk0EhlZdHaDFpgWUw3Lp21wUN7GSifOJVE5hV2ngmpzM+J12OH8bG1GZoDag==
+
 "@tensorflow-models/blazeface@^0.0.2":
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/@tensorflow-models/blazeface/-/blazeface-0.0.2.tgz#212b264097abc8336ff0804be1e530c8f3c4e852"
   integrity sha512-U9vyp59mwpbOhD0CD1+E76sOTyrQ8laIp0S9kn5zl3xn5CeB3U7RLrAqbVUs96MG4ppMzLHT2nLYXl/ooxlu5Q==
+
+"@tensorflow-models/facemesh@0.0.2":
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/@tensorflow-models/facemesh/-/facemesh-0.0.2.tgz#d449434b24a928013d57dda6b452b7b3631b8a3d"
+  integrity sha512-2z6j6KRBiooHNDj5FemVmQx7v0TSo6rB4lxMbW8IW6Iozlcv/c3ngcQNvC5i9e7m2QeLWRc/7OEH7d8QjnqQiw==
+  dependencies:
+    "@tensorflow-models/blazeface" "0.0.5"
 
 "@tensorflow-models/mobilenet@^2.0.4":
   version "2.0.4"
