@@ -883,6 +883,13 @@
     "@types/seedrandom" "2.4.27"
     seedrandom "2.4.3"
 
+"@tensorflow/tfjs-backend-wasm@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-backend-wasm/-/tfjs-backend-wasm-2.4.0.tgz#0c6864608579ac09f3cd09da165d22b6d97a3ae9"
+  integrity sha512-AK9PWYQ/hvwM6HjMoNA8aoRvPK6G8DSjzvlRkSdx0QyK0dicrFeEYzUzjDGl5V0Bo7qbwAXVX7Gie6tF0CoGXw==
+  dependencies:
+    "@types/emscripten" "~0.0.34"
+
 "@tensorflow/tfjs-backend-webgl@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-backend-webgl/-/tfjs-backend-webgl-2.0.0.tgz#8f53ca3598ff922ee6ad28daf0ccc8089981d105"
@@ -980,6 +987,11 @@
   integrity sha512-CeBpmX1J8kWLcDEnI3Cl2Eo6RfbGvzUctA+CjZUhOKDFbLfcr7fc4usEqLNWetrlJd7RhAkyYe2czXop4fICpw==
   dependencies:
     "@babel/types" "^7.3.0"
+
+"@types/emscripten@~0.0.34":
+  version "0.0.34"
+  resolved "https://registry.yarnpkg.com/@types/emscripten/-/emscripten-0.0.34.tgz#12b4a344274fb102ff2f6c877b37587bc3e46008"
+  integrity sha512-QSb9ojDincskc+uKMI0KXp8e1NALFINCrMlp8VGKGcTSxeEyRTTKyjWw75NYrCZHUsVEEEpr1tYHpbtaC++/sQ==
 
 "@types/istanbul-lib-coverage@*", "@types/istanbul-lib-coverage@^2.0.0":
   version "2.0.1"

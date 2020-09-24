@@ -33,8 +33,13 @@ import * as tf from "@tensorflow/tfjs";
 import * as blazeface from "@tensorflow-models/blazeface";
 import * as posenet from "@tensorflow-models/posenet";
 import { cameraWithTensors } from "@tensorflow/tfjs-react-native";
+import * as facemesh from "@tensorflow-models/facemesh";
+import * as tfjsWasm from "@tensorflow/tfjs-backend-wasm";
+// import "@tensorflow/tfjs-backend-wasm";
 
-require("@tensorflow/tfjs-backend-webgl");
+// require("@tensorflow/tfjs-backend-webgl");
+// require("@tensorflow/tfjs-backend-wasm");
+
 interface ScreenProps {
   returnToMain: () => void;
 }
@@ -73,21 +78,24 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
     this.handleImageTensorReady = this.handleImageTensorReady.bind(this);
   }
 
-  async loadPosenetModel() {
-    const model = await posenet.load({
-      architecture: "MobileNetV1",
-      outputStride: 16,
-      inputResolution: { width: inputTensorWidth, height: inputTensorHeight },
-      multiplier: 0.75,
-      quantBytes: 2,
-    });
-    return model;
-  }
+  // async loadPosenetModel() {
+  //   const model = await posenet.load({
+  //     architecture: "MobileNetV1",
+  //     outputStride: 16,
+  //     inputResolution: { width: inputTensorWidth, height: inputTensorHeight },
+  //     multiplier: 0.75,
+  //     quantBytes: 2,
+  //   });
+  //   return model;
+  // }
 
-  async loadBlazefaceModel() {
-    const model = await blazeface.load();
-    return model;
-  }
+  // async loadBlazefaceModel() {
+  //   await tf.setBackend("wasm");
+  //   await tf.ready();
+
+  //   const model = await facemesh.load({ maxFaces: 1 });
+  //   return model;
+  // }
 
   async handleImageTensorReady(
     images: IterableIterator<tf.Tensor3D>,
@@ -100,30 +108,30 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
         updatePreview();
       }
 
-      if (modelName === "posenet") {
-        if (this.state.posenetModel != null) {
-          const imageTensor = images.next().value;
-          const flipHorizontal = Platform.OS === "ios" ? false : true;
-          const pose = await this.state.posenetModel.estimateSinglePose(
-            imageTensor,
-            { flipHorizontal }
-          );
-          this.setState({ pose });
-          tf.dispose([imageTensor]);
-        }
-      } else {
-        if (this.state.faceDetector != null) {
-          const imageTensor = images.next().value;
-          const returnTensors = false;
-          const faces = await this.state.faceDetector.estimateFaces(
-            imageTensor,
-            returnTensors
-          );
+      // if (modelName === "posenet") {
+      //   if (this.state.posenetModel != null) {
+      //     const imageTensor = images.next().value;
+      //     const flipHorizontal = Platform.OS === "ios" ? false : true;
+      //     const pose = await this.state.posenetModel.estimateSinglePose(
+      //       imageTensor,
+      //       { flipHorizontal }
+      //     );
+      //     this.setState({ pose });
+      //     tf.dispose([imageTensor]);
+      //   }
+      // } else {
+      if (this.state.faceDetector != null) {
+        const imageTensor = images.next().value;
+        const returnTensors = false;
+        const faces = await this.state.faceDetector.estimateFaces(
+          imageTensor,
+          returnTensors
+        );
 
-          this.setState({ faces });
-          tf.dispose(imageTensor);
-        }
+        this.setState({ faces });
+        tf.dispose(imageTensor);
       }
+      // }
 
       if (!AUTORENDER) {
         gl.endFrameEXP();
@@ -142,18 +150,28 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
 
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
-
-    const [blazefaceModel, posenetModel] = await Promise.all([
-      this.loadBlazefaceModel(),
-      this.loadPosenetModel(),
-    ]);
-
-    this.setState({
-      hasCameraPermission: status === "granted",
-      isLoading: false,
-      faceDetector: blazefaceModel,
-      posenetModel,
+    await tfjsWasm.setWasmPath(
+      `https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@${tfjsWasm.version_wasm}/dist/tfjs-backend-wasm.wasm`
+    );
+    await tf.ready().then(async () => {
+      console.log("ready");
+      await tf
+        .setBackend("wasm")
+        .then(async () => {
+          const model = await facemesh.load({ maxFaces: 1 });
+          this.setState({
+            hasCameraPermission: status === "granted",
+            isLoading: false,
+            faceDetector: model,
+          });
+        })
+        .catch((err) => console.log("erro", err));
     });
+
+    // const [blazefaceModel] = await Promise.all([
+    //   this.loadBlazefaceModel(),
+    //   // this.loadPosenetModel(),
+    // ]);
   }
 
   renderPose() {
@@ -208,26 +226,28 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
       return null;
     }
   }
-
   renderFaces() {
     const { faces } = this.state;
     if (faces != null) {
-      const faceBoxes = faces.map((f, fIndex) => {
-        const topLeft = f.topLeft as number[];
-        const bottomRight = f.bottomRight as number[];
-
-        const landmarks = (f.landmarks as number[][]).map((l, lIndex) => {
-          return (
-            <Circle
-              key={`landmark_${fIndex}_${lIndex}`}
-              cx={l[0]}
-              cy={l[1]}
-              r="2"
-              strokeWidth="0"
-              fill="blue"
-            />
-          );
-        });
+      console.log("backend", tf.getBackend());
+      const faceBoxes = faces.map((fa, fIndex) => {
+        var f: any;
+        f = fa;
+        f = f.boundingBox;
+        const topLeft = f.topLeft[0] as number[];
+        const bottomRight = f.bottomRight[0] as number[];
+        // const landmarks = (f.landmarks as number[][]).map((l, lIndex) => {
+        //   return (
+        //     <Circle
+        //       key={`landmark_${fIndex}_${lIndex}`}
+        //       cx={l[0]}
+        //       cy={l[1]}
+        //       r="2"
+        //       strokeWidth="0"
+        //       fill="blue"
+        //     />
+        //   );
+        // });
 
         return (
           <G key={`facebox_${fIndex}`}>
@@ -239,7 +259,7 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
               width={bottomRight[0] - topLeft[0]}
               height={bottomRight[1] - topLeft[1]}
             />
-            {landmarks}
+            {/* {landmarks} */}
           </G>
         );
       });
@@ -295,7 +315,7 @@ export class RealtimeDemo extends React.Component<ScreenProps, ScreenState> {
           autorender={AUTORENDER}
         />
         <View style={styles.modelResults}>
-          {modelName === "posenet" ? this.renderPose() : this.renderFaces()}
+          {modelName === "posenet" ? this.renderFaces() : this.renderFaces()}
         </View>
       </View>
     );
