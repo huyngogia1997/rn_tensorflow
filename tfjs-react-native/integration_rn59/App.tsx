@@ -251,7 +251,7 @@ export class App extends React.Component<ScreenProps, ScreenState> {
         var f: any;
         f = fa;
         const topLeft = f.boundingBox.topLeft[0] as number[];
-        // const bottomRight = f.boundingBox.bottomRight[0] as number[];
+        const bottomRight = f.boundingBox.bottomRight[0] as number[];
         const landmarks = (f.mesh as number[][]).map((l, lIndex) => {
           console.log(l, topLeft[0], topLeft[1]);
           return (
@@ -266,19 +266,19 @@ export class App extends React.Component<ScreenProps, ScreenState> {
           );
         });
 
-        // return (
-        //   <G key={`facebox_${fIndex}`}>
-        //     <Rect
-        //       x={topLeft[0]}
-        //       y={topLeft[1]}
-        //       fill={"red"}
-        //       fillOpacity={0.2}
-        //       width={bottomRight[0] - topLeft[0]}
-        //       height={bottomRight[1] - topLeft[1]}
-        //     />
-        //     {landmarks}
-        //   </G>
-        // );
+        return (
+          <G key={`facebox_${fIndex}`}>
+            <Rect
+              x={topLeft[0]}
+              y={topLeft[1]}
+              fill={"red"}
+              fillOpacity={0.2}
+              width={bottomRight[0] - topLeft[0]}
+              height={bottomRight[1] - topLeft[1]}
+            />
+            {landmarks}
+          </G>
+        );
       });
 
       const flipHorizontal = Platform.OS === "ios" ? 1 : -1;
