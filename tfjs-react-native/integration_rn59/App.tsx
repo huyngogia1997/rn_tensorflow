@@ -252,7 +252,7 @@ export class App extends React.Component<ScreenProps, ScreenState> {
         f = fa;
         const topLeft = f.boundingBox.topLeft[0] as number[];
         // const bottomRight = f.boundingBox.bottomRight[0] as number[];
-        // const landmarks = (f.mesh as number[][]).map((l, lIndex) => {
+        const landmarks = (f.mesh as number[][]).map((l, lIndex) => {
           console.log(l, topLeft[0], topLeft[1]);
           return (
             <Circle
